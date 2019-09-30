@@ -29,13 +29,19 @@ func queryBuilder(ctx context.Context, in <-chan SchemaData) (
 			sd := schemadata
 			sd.Queries = make(map[string]string, 1)
 
-			if sd.DataModel == sd.ClassifiedAs { // data has no root element
+			if sd.DataModel == sd.ClassifiedAs { // may indicate data has no root element, like xAPI
 				// assign derived strucure from parsed type map
 				structure, ok := sd.Types["n3-structure"]
 				if !ok {
 					errc <- errors.New("json object in queryBuilder() has no root or detected structure")
+					return
 				}
-				sd.Types[sd.ClassifiedAs] = structure
+				// this is the definitive check..
+				// if the strucure only has 1 entry, then the data is of that type
+				// and is also of that data model, such as a Lesson.
+				if len(structure) > 1 {
+					sd.Types[sd.ClassifiedAs] = structure
+				}
 			}
 			// remove the structure element, no longer needed
 			delete(sd.Types, "n3-structure")

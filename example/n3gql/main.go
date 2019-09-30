@@ -33,7 +33,9 @@ func main() {
 	}
 
 	// dataFile := "./sample_data/sif/sif.json"
-	dataFile = "./sample_data/xapi/xapi.json" //TODO: lesson / subject - syllabus ok!
+	// dataFile = "./sample_data/xapi/xapi.json"
+	dataFile = "./sample_data/lessons/lessons.json"
+	// dataFile = "./sample_data/subjects/subjects.json"
 	err = c1.PublishFromFile(dataFile)
 	if err != nil {
 		log.Fatal("PublishFromFile() Error: ", err)
@@ -61,7 +63,7 @@ func main() {
 
 	// consume data for a time
 	log.Println("...CM1 listening for updates")
-	time.Sleep(time.Second * 30)
+	time.Sleep(time.Second * 10)
 	// time.Sleep(time.Minute)
 
 	// shut down the contexts, but persist details
