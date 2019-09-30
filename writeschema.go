@@ -8,7 +8,7 @@ import "strings"
 // takes the aggregated schema data and creates a string
 // in the required gql format for the whole schema
 //
-func writeSchema(sd SchemaData) (string, error) {
+func writeSchema(sd SchemaData) string {
 
 	var str strings.Builder
 
@@ -67,6 +67,6 @@ func writeSchema(sd SchemaData) (string, error) {
 	str.WriteString("\tfilters: [FilterSpec!]\n")
 	str.WriteString("}\n\n")
 
-	return str.String(), nil
+	return str.String()
 
 }

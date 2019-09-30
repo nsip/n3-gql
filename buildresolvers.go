@@ -23,7 +23,6 @@ func buildResolvers(db *deep6.Deep6DB) map[string]interface{} {
 	f := func(params *graphql.ResolveParams) (interface{}, error) {
 
 		timeTrack(time.Now(), "n3DataQuery() ")
-		// log.Println("...default resolver called")
 
 		//
 		// get query variables from params
@@ -33,7 +32,6 @@ func buildResolvers(db *deep6.Deep6DB) map[string]interface{} {
 		if !ok {
 			return nil, errors.New("no query input object provided.")
 		}
-		// log.Printf("input:\n%v\n\n", input)
 
 		qtype, ok := input["queryType"].(string)
 		if !ok {
@@ -79,8 +77,6 @@ func buildResolvers(db *deep6.Deep6DB) map[string]interface{} {
 			}
 		}
 
-		// log.Printf("query params:\nquery-type:%s\nquery-value:%s\ntraversal:%v\nfilters:%v\n\n", qtype, qval, tSpec, fSpec)
-
 		var results map[string][]map[string]interface{}
 		var dbErr error
 
@@ -102,9 +98,7 @@ func buildResolvers(db *deep6.Deep6DB) map[string]interface{} {
 			return nil, dbErr
 		}
 
-		// log.Printf("raw-results:\n%s\n\n", results)
 		gqlResults := gqlTransform(results)
-		// log.Printf("transformed-results:\n%s\n\n", gqlResults)
 
 		return gqlResults, nil
 

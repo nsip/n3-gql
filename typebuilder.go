@@ -44,6 +44,10 @@ func typeBuilder(ctx context.Context, in <-chan SchemaData) (
 
 }
 
+//
+// splits out the parent / child types from the json objects
+// to create the necessary graphql schema definitions
+//
 func assignObject(tm map[string]map[string]string, parentKey string, val gjson.Result) {
 
 	if parentKey == "" {
@@ -79,13 +83,11 @@ func assignObject(tm map[string]map[string]string, parentKey string, val gjson.R
 			}
 			return true
 		})
-		// fmt.Printf("t: \n%#v\n\n", t)
 	default:
 		t[parentKey] = deriveScalarType(val)
 	}
 
 	tm[parentKey] = t
-	// fmt.Printf("tm: \n%#v\n\n", tm)
 
 }
 
