@@ -1,0 +1,14 @@
+
+example/n3gql/clean.sh
+example/n3gql/contexts/contexts.json
+example/n3gql/contexts/qglUser1/gqlContext/crdt/config/datatypes.toml
+*.vlog
+*.sst
+example/n3gql/contexts/qglUser1/gqlContext/crdt/recv/MANIFEST
+example/n3gql/contexts/qglUser1/gqlContext/crdt/send/MANIFEST
+example/n3gql/contexts/qglUser1/gqlContext/d6/config/datatypes.toml
+example/n3gql/contexts/qglUser1/gqlContext/d6/MANIFEST
+*.sbf
+example/n3gql/n3gql
+example/n3gql/out.txt
+example/n3gql/results.json
