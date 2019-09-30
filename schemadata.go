@@ -6,7 +6,6 @@ package n3gql
 // data package passed between stages of the
 // schema-builder pipeline
 //
-// TODO: check public access required!!
 //
 type SchemaData struct {
 	RawData      []byte

@@ -12,3 +12,4 @@ example/n3gql/contexts/qglUser1/gqlContext/d6/MANIFEST
 example/n3gql/n3gql
 example/n3gql/out.txt
 example/n3gql/results.json
+example/n3gql/contexts/qglUser1/gqlContext/gql/schema.json
