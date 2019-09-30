@@ -79,11 +79,13 @@ func assignObject(tm map[string]map[string]string, parentKey string, val gjson.R
 			}
 			return true
 		})
+		// fmt.Printf("t: \n%#v\n\n", t)
 	default:
 		t[parentKey] = deriveScalarType(val)
 	}
 
 	tm[parentKey] = t
+	// fmt.Printf("tm: \n%#v\n\n", tm)
 
 }
 

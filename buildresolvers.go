@@ -4,7 +4,6 @@ package n3gql
 
 import (
 	"errors"
-	"log"
 	"time"
 
 	deep6 "github.com/nsip/n3-deep6"
@@ -24,11 +23,12 @@ func buildResolvers(db *deep6.Deep6DB) map[string]interface{} {
 	f := func(params *graphql.ResolveParams) (interface{}, error) {
 
 		timeTrack(time.Now(), "n3DataQuery() ")
+		// log.Println("...default resolver called")
 
-		log.Println("...default resolver called")
-
+		//
 		// get query variables from params
 		// type : value : traversal : filters etc.
+		//
 		input, ok := params.Args["qspec"].(map[string]interface{})
 		if !ok {
 			return nil, errors.New("no query input object provided.")
@@ -44,21 +44,26 @@ func buildResolvers(db *deep6.Deep6DB) map[string]interface{} {
 			return nil, errors.New("queryValue must be set")
 		}
 		//
-		// format the traversal spec if provided
+		// re-structure the traversal spec if provided
+		// required becasue playlyfe lib only passes interface{} objects
+		// and we need to assert types in golang traversal spec.
 		//
 		tSpec := deep6.Traversal{TraversalSpec: make([]string, 0)}
 		if ts, ok := input["traversal"]; ok {
-			// tspec, err = extractTraversal()
 			for _, token := range ts.([]interface{}) {
 				tSpec.TraversalSpec = append(tSpec.TraversalSpec, token.(string))
 			}
 		}
 		//
-		// re-format the filters if provided
+		// re-structure the filters if provided
+		// to save gql users typing/noise filters are expressed as
+		// (operation e.g 'eq':) followed by triplet of strings
+		// [DataType | Predicate | TargetValue] which are here
+		// unpacked from the interfaces{} playlyfe provides as
+		// query params back into the required golang structs
 		//
 		fSpec := deep6.FilterSpec{}
 		if filters, ok := input["filters"]; ok {
-			// fSpec, err = extractFilters()
 			for _, filter := range filters.([]interface{}) {
 				for _, v := range filter.(map[string]interface{}) {
 					triple := make([]string, 0, 3)
@@ -72,16 +77,9 @@ func buildResolvers(db *deep6.Deep6DB) map[string]interface{} {
 					fSpec[triple[0]] = append(fSpec[triple[0]], f)
 				}
 			}
-			// log.Printf("...created filterspec:\n%#v\n\n", fSpec)
 		}
 
-		log.Printf("query params:\nquery-type:%s\nquery-value:%s\ntraversal:%v\nfiltes:%v\n\n", qtype, qval, tSpec, fSpec)
-
-		// r := map[string]interface{}{
-		// 	"StudentPersonal": []map[string]interface{}{{"RefId": "sif1234"}, {"RefId": "sif1234"}},
-		// 	"XAPI":            []map[string]interface{}{{"id": "xapi1234"}, {"id": "xapi1234"}},
-		// }
-		// return r, nil
+		// log.Printf("query params:\nquery-type:%s\nquery-value:%s\ntraversal:%v\nfilters:%v\n\n", qtype, qval, tSpec, fSpec)
 
 		var results map[string][]map[string]interface{}
 		var dbErr error
@@ -89,7 +87,7 @@ func buildResolvers(db *deep6.Deep6DB) map[string]interface{} {
 		switch qtype {
 		case "findById":
 			results, dbErr = db.FindById(qval)
-		case "findByType": // TODO: Implement filterspecs
+		case "findByType":
 			results, dbErr = db.FindByType(qval, fSpec)
 		case "findByValue":
 			results, dbErr = db.FindByValue(qval, fSpec)
@@ -98,6 +96,7 @@ func buildResolvers(db *deep6.Deep6DB) map[string]interface{} {
 		case "traversalWithId":
 			results, dbErr = db.TraversalWithId(qval, tSpec, fSpec)
 		case "traversalWithValue":
+			results, dbErr = db.TraversalWithValue(qval, tSpec, fSpec)
 		}
 		if dbErr != nil {
 			return nil, dbErr
