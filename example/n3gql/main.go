@@ -24,16 +24,18 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// send in some data, via the crdt layer, sif which has object identifiers
+	//
+	// send in some data, via the crdt layer
+	//
 	dataFile := "./sample_data/sif/sif.json"
-	// dataFile := "./sample_data/xapi/xapi.json"
+	// dataFile := "./sample_data/xapi/xapi_en.json"
 	err = c1.PublishFromFile(dataFile)
 	if err != nil {
 		log.Fatal("PublishFromFile() Error: ", err)
 	}
 
 	// dataFile := "./sample_data/sif/sif.json"
-	// dataFile = "./sample_data/xapi/xapi.json"
+	// dataFile = "./sample_data/xapi/xapi_en.json"
 	dataFile = "./sample_data/lessons/lessons.json"
 	// dataFile = "./sample_data/subjects/subjects.json"
 	err = c1.PublishFromFile(dataFile)
