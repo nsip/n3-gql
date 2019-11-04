@@ -29,8 +29,8 @@ func NewGQLManager(userid, contextName string, db *deep6.Deep6DB) *GQLManager {
 		Types:   make(map[string]map[string]string),
 		Queries: make(map[string]string),
 	}
-	// OR load here...
-	// from json if possible
+	//
+	// load here from json if exists
 	//
 	contextPath := fmt.Sprintf("./contexts/%s/%s/gql", userid, contextName)
 	schemaFile, err := os.Open(contextPath + "/schema.json")
@@ -45,15 +45,11 @@ func NewGQLManager(userid, contextName string, db *deep6.Deep6DB) *GQLManager {
 		}
 	}
 
-	// should gob encode ok, or json ---
-
 	execParams := &gqlengine.GraphQLParams{
 		QueryRoot:        "n3query",
 		SchemaDefinition: writeSchema(sd),
 		Resolvers:        buildResolvers(db),
 	}
-
-	// TODO: load any existing schema!!!
 
 	return &GQLManager{
 		UserId:         userid,
@@ -76,10 +72,10 @@ func (gqm *GQLManager) BuildSchemaFromJSONChannel(iterator <-chan []byte) error 
 		return err
 	}
 
-	schemaString := writeSchema(gqm.Schema)
-
+	// TODO - revist lock!!!
 	// store in the executor params so a new executor can be built on demand
 	gqm.Lock()
+	schemaString := writeSchema(gqm.Schema)
 	gqm.executorParams.SchemaDefinition = schemaString
 	gqm.Unlock()
 
@@ -94,13 +90,25 @@ func (gqm *GQLManager) BuildSchemaFromJSONChannel(iterator <-chan []byte) error 
 //
 func (gqm *GQLManager) Query(query string, variables map[string]interface{}) (map[string]interface{}, error) {
 
-	executor, err := graphql.NewGraphQL(gqm.executorParams)
+	// TODO: revist lock!!!
+	gqm.Lock()
+	defer gqm.Unlock()
+
+	params := gqm.executorParams
+
+	// executor, err := graphql.NewGraphQL(gqm.executorParams)
+	executor, err := graphql.NewGraphQL(params)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to construct executor gqlm.Query():")
 	}
 
 	context := map[string]interface{}{}
-	return executor.Execute(context, query, variables, "")
+	results, err := executor.Execute(context, query, variables, "")
+	if err != nil {
+		return nil, err
+	}
+
+	return results, nil //executor.Execute(context, query, variables, "")
 
 }
 
