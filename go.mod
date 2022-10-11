@@ -10,6 +10,5 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/playlyfe/go-graphql v0.0.0-20191219091308-23c3f22218ef
 	github.com/smartystreets/goconvey v1.6.4 // indirect
-	github.com/tidwall/gjson v1.6.0
-	google.golang.org/protobuf v1.25.0 // indirect
+	github.com/tidwall/gjson v1.9.3
 )
