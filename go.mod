@@ -4,7 +4,7 @@ go 1.14
 
 require (
 	github.com/BurntSushi/toml v0.3.1
-	github.com/nats-io/nats-streaming-server v0.18.0 // indirect
+	github.com/nats-io/nats-streaming-server v0.24.3 // indirect
 	github.com/nsip/n3-context v0.1.1
 	github.com/nsip/n3-deep6 v0.1.1
 	github.com/pkg/errors v0.9.1
